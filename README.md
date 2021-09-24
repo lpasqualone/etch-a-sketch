@@ -5,7 +5,7 @@
 
 Create a JavaScript version of etch-a-sketch toy, using mouseover function to change grid colors.
 
-[Live Demo]()👈
+[Live Demo](https://lpasqualone.github.io/etch-a-sketch/)👈
 
 ### **Technologies and Tools Used**
 
