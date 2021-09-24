@@ -1,45 +1,103 @@
-// Container -- whole site
+const DEFAULT_COLOR = '#333333';
+const DEFAULT_MODE = 'color';
+const DEFAULT_SIZE = 16;
 
-const container = document.querySelector('#container');
+let currentColor = DEFAULT_COLOR;
+let currentMode = DEFAULT_MODE;
+let currentSize = DEFAULT_SIZE;
 
-// Site Title "Etch-A-Sketch"
+function setCurrentColor(newColor) {
+    currentColor = newColor;
+}
 
-const title = document.createElement('h1');
-title.classList.add('title');
-title.textContent = 'Etch-A-Sketch';
+function setCurrentMode(newMode) {
+    activateButton(newMode);
+    currentMode = newMode;
+}
 
-container.appendChild(title);
+function setCurrentSize(newSize) {
+    currentSize = newSize;
+}
 
-// Main Content Container
+const colorPicker = document.getElementById('colorPicker');
+const colorBtn = document.getElementById('colorBtn');
+const rainbowBtn = document.getElementById('rainbowBtn');
+const eraserBtn = document.getElementById('eraserBtn');
+const clearBtn = document.getElementById('clearBtn');
+const sizeValue = document.getElementById('sizeValue');
+const sizeSlider = document.getElementById('sizeSlider');
+const grid = document.getElementById('grid');
 
-const mainContent = document.createElement('div');
-mainContent.classList.add('mainContent');
+colorPicker.onchange = (e) => setCurrentColor(e.target.value);
+colorBtn.onclick = () => setCurrentMode('color');
+rainbowBtn.onclick = () => setCurrentMode('rainbow');
+eraserBtn.onclick = () => setCurrentMode('eraser');
+clearBtn.onclick = () => reloadGrid();
+sizeSlider.onmousemove = (e) => updateSizeValue(e.target.value);
+sizeSlider.onchange = (e) => changeSize(e.target.value);
 
-container.appendChild(mainContent);
+function changeSize(value) {
+    setCurrentSize(value);
+    updateSizeValue(value);
+    reloadGrid();
+}
 
-// Create internal containers (Left, Canvas, Right)
+function updateSizeValue(value) {
+    sizeValue.innerHTML = `${value} x ${value}`;
+}
 
-//leftBlock => Settings
+function reloadGrid() {
+    clearGrid();
+    setupGrid(currentSize);
+}
 
-const settings = document.createElement('div');
-settings.classList.add('settings');
+function clearGrid() {
+    grid.innerHTML = '';
+}
 
-mainContent.appendChild(settings);
+function setupGrid(size) {
+    grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+    grid.style.gridTemplateRows = `repeat(${size}, 1fr)`;
 
-//Canvas Board
+    for (let i = 0; i < size * size; i++) {
+        const gridElement = document.createElement('div');
+        gridElement.addEventListener('mouseover', changeColor);
+        grid.appendChild(gridElement);
+    }
+}
 
-const canvas = document.createElement('div');
-canvas.classList.add('canvas');
+function changeColor(e) {
+    if (currentMode === 'rainbow') {
+        const randomR = Math.floor(Math.random() * 256);
+        const randomG = Math.floor(Math.random() * 256);
+        const randomB = Math.floor(Math.random() * 256);
+        e.target.style.backgroundColor = `rgb(${randomR}, ${randomG}, ${randomB})`;
+    } else if (currentMode === 'color') {
+        e.target.style.backgroundColor = currentColor;
+    } else if (currentMode === 'eraser') {
+        e.target.style.backgroundColor = '#fefefe';
+    }
+}
 
-mainContent.appendChild(canvas);
+function activateButton(newMode) {
+    if (currentMode === 'rainbow') {
+        rainbowBtn.classList.remove('active');
+    } else if (currentMode === 'color') {
+        colorBtn.classList.remove('active');
+    } else if (currentMode === 'eraser') {
+        eraserBtn.classList.remove('active');
+    }
 
-//rightBlock => BLANK SPACE
+    if (newMode = 'rainbow') {
+        rainbowBtn.classList.add('active');
+    } else if (newMode === 'color') {
+        colorBtn.classList.add('active');
+    } else if (newMode === 'eraser') {
+        eraserBtn.classList.add('active');
+    }
+}
 
-const rightBlock = document.createElement('div');
-rightBlock.classList.add('rightBlock');
-
-mainContent.appendChild(rightBlock);
-
-// Create menu options on leftBlock
-
-// Color selector
+window.onload = () => {
+    setupGrid(DEFAULT_SIZE);
+    activateButton(DEFAULT_MODE);
+}
